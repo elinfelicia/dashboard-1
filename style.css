@@ -90,6 +90,10 @@ body {
   padding: 0.5rem;
 }
 
+.weather-day {
+  border: 1px solid black;
+}
+
 button {
   background-color: var(--clr-inner-bg);
   padding: 0.5rem;
