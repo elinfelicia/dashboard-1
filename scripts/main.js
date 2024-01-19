@@ -1,5 +1,6 @@
-import { fetchWeatherData, fetchWeatherForecast, comingDaysWeather } from './weatherAPI';
+import {fetchWeatherForecast, comingDaysWeather } from './weatherAPI';
 import "./background.js"
+import axios from 'axios';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Date and time display
@@ -40,6 +41,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //Links
 
+const addLinkBtn = document.querySelector("#links-btn");
+const linkList = document.querySelector("#linkList");
+let newListItem
+let newLink
+let removeLinkBtn
+
+addLinkBtn.addEventListener("click", () => {
+  const addLink = prompt("Add link URL");
+
+  function isValidUrl (url) {
+    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+    return urlRegex.test(url);
+  }
+
+  function addElement() {
+    if (addLink && isValidUrl(addLink)) {
+      newListItem = document.createElement("li");
+      
+      newLink = document.createElement("a")
+      newLink.href = addLink;
+      newLink.textContent = addLink;
+
+      removeLinkBtn = document.createElement("button");
+      removeLinkBtn.textContent = "x"
+      removeLinkBtn.classList.add("remove-btn");
+      removeLinkBtn.addEventListener("click", () => {
+        linkList.removeChild(newListItem)
+      });
+
+      newListItem.appendChild(newLink);
+      newListItem.appendChild(removeLinkBtn);
+      linkList.appendChild(newListItem)
+    } else {
+      alert ("Please enter a valid URL")
+    }
+  }
+  addElement();
+});
 
 
 

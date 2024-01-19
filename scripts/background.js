@@ -23,3 +23,7 @@ function setBackground () {
 }
 
 document.addEventListener("DOMContentLoaded", setBackground);
+
+const bgBtn = document.querySelector(".bg-btn")
+
+bgBtn.addEventListener("click", setBackground)
