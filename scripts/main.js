@@ -1,5 +1,6 @@
 import {fetchWeatherForecast, comingDaysWeather } from './weatherAPI';
 import "./background.js"
+import { fetchRandomCocktail, displayCocktail } from './cocktail';
 import axios from 'axios';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -43,43 +44,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const addLinkBtn = document.querySelector("#links-btn");
 const linkList = document.querySelector("#linkList");
-let newListItem
-let newLink
-let removeLinkBtn
+const savedLinks = localStorage.getItem("linkListContent");
+if (savedLinks) {
+  linkList.innerHTML = savedLinks;
+}
 
 addLinkBtn.addEventListener("click", () => {
   const addLink = prompt("Add link URL");
 
-  function isValidUrl (url) {
+  function isValidUrl(url) {
     const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
     return urlRegex.test(url);
   }
 
-  function addElement() {
+  if (addLink !== null) {
     if (addLink && isValidUrl(addLink)) {
-      newListItem = document.createElement("li");
-      
-      newLink = document.createElement("a")
-      newLink.href = addLink;
-      newLink.textContent = addLink;
+      const cleanedUrl = addLink.replace(/^(https?:\/\/)?(www\.)?/i, '');
+      const newListItem = document.createElement("li");
+      const newLink = document.createElement("a");
+      const removeLinkBtn = document.createElement("button");
 
-      removeLinkBtn = document.createElement("button");
-      removeLinkBtn.textContent = "x"
+      newLink.href = addLink;
+      newLink.textContent = cleanedUrl;
+
+      removeLinkBtn.textContent = "x";
       removeLinkBtn.classList.add("remove-btn");
       removeLinkBtn.addEventListener("click", () => {
-        linkList.removeChild(newListItem)
+        linkList.removeChild(newListItem);
+        saveLinks();
       });
 
       newListItem.appendChild(newLink);
       newListItem.appendChild(removeLinkBtn);
-      linkList.appendChild(newListItem)
+      linkList.appendChild(newListItem);
+
+      saveLinks();
     } else {
-      alert ("Please enter a valid URL")
+      alert("Please enter a valid URL");
     }
   }
-  addElement();
 });
 
+function saveLinks() {
+  const linkContent = linkList.innerHTML;
+  localStorage.setItem("linkListContent", linkContent);
+}
 
 
 //Weather
@@ -96,26 +105,42 @@ fetchWeatherForecast(city, apiKeyWeather)
   });
 
 
-function updateWeatherHTML(weatherData) {
-  const weatherContainer = document.querySelector("#weatherContainer");
+  function updateWeatherHTML(weatherData) {
+    const weatherContainer = document.querySelector("#weatherContainer");
+  
+    weatherData.forEach(day => {
+      const dayElement = document.createElement("div");
+      dayElement.classList.add("weather-day");
+  
+      const dateElement = document.createElement("p");
+      dateElement.textContent = day.date;
+  
+      const temperatureElement = document.createElement("p");
+      temperatureElement.textContent = `${day.temperature} °C`;
+  
+      const descriptionElement = document.createElement("p");
+      descriptionElement.textContent = day.description;
+  
+      dayElement.appendChild(dateElement);
+      dayElement.appendChild(temperatureElement);
+      dayElement.appendChild(descriptionElement);
+  
+      weatherContainer.appendChild(dayElement);
+    });
+  
+    const drinkContainer = document.querySelector(".drink-display");
+    const fetchCocktailBtn = document.querySelector(".drink-btn")
+    fetchCocktailBtn.addEventListener("click", async () => {
+      try {
+        const cocktailData = await fetchRandomCocktail();
+        displayCocktail(cocktailData);
+      } catch (error) {
+        console.error("Error fetching and displaying cocktail:", error);
+      }
+    });
+  
+    drinkContainer.innerHTML = ""; // Clear previous content
+    drinkContainer.appendChild(fetchCocktailBtn);
+  }
 
-  weatherData.forEach(day => {
-    const dayElement = document.createElement("div");
-    dayElement.classList.add("weather-day");
 
-    const dateElement = document.createElement("p");
-    dateElement.textContent = day.date;
-
-    const temperatureElement = document.createElement("p");
-    temperatureElement.textContent = `${day.temperature} °C`;
-
-    const descriptionElement = document.createElement("p");
-    descriptionElement.textContent = day.description;
-
-    dayElement.appendChild(dateElement);
-    dayElement.appendChild(temperatureElement);
-    dayElement.appendChild(descriptionElement);
-
-    weatherContainer.appendChild(dayElement);
-  });
-}
