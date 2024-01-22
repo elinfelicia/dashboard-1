@@ -12,11 +12,13 @@
 }
 
 body {
-  background-image: url(images/mt-bg.jpg);
+
   background-size: cover;
-  background-repeat: none;
+  background-repeat: no-repeat;
   overflow: hidden;
   font-family: var(--ff-main-font);
+  width: 100%;
+  margin: auto;
 }
 
 .wrapper {

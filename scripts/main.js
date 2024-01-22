@@ -86,7 +86,7 @@ function saveLinks() {
   localStorage.setItem("linkListContent", linkContent);
 }
 
-const apiKeyWeather = "API KEY";
+const apiKeyWeather = "2a95bae798cb75042546bc09335b74b6";
 const city = "Stockholm";
 
 fetchWeatherForecast(city, apiKeyWeather)
