@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const apiKey = "RPkU6IXwtN-0VVM6iEIlXckKiVagvM2zfqi4BQtAQVM";
+const apiKey = "API KEY";
 const apiUrl = `https://api.unsplash.com/photos/random?query=nature&client_id=${apiKey}`;
 
 async function fetchBackground() {
