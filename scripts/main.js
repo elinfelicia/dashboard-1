@@ -1,22 +1,20 @@
-import {fetchWeatherForecast, comingDaysWeather } from './weatherAPI';
-import "./background.js"
+import { fetchWeatherForecast, comingDaysWeather } from './weatherAPI';
+import "./background.js";
 import { fetchRandomCocktail, displayCocktail } from './cocktail';
 import axios from 'axios';
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Date and time display
+document.addEventListener('DOMContentLoaded', async () => {
   function dateTimeFn() {
     const now = new Date();
     const currentDate = now.toDateString();
     document.querySelector("#currentDate").textContent = currentDate;
-    
+
     let hour = now.getHours();
     let minute = now.getMinutes();
     document.querySelector("#currentTime").textContent = `${hour}:${minute}`;
   }
   setInterval(dateTimeFn, 1000);
 
-  // Custom Greeting
   const welcomeMsg = document.querySelector("#welcomeMessage");
   const customGreeting = localStorage.getItem("welcomeMsgContent");
   if (customGreeting) {
@@ -27,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem("welcomeMsgContent", content);
   });
 
-  // Save notes
   const notepad = document.querySelector("#notesArea");
   const savedNotes = localStorage.getItem("notepadContent");
   if (savedNotes) {
@@ -37,10 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const noteContent = notepad.value;
     localStorage.setItem("notepadContent", noteContent);
   });
-  
 });
-
-//Links
 
 const addLinkBtn = document.querySelector("#links-btn");
 const linkList = document.querySelector("#linkList");
@@ -60,9 +54,11 @@ addLinkBtn.addEventListener("click", () => {
   if (addLink !== null) {
     if (addLink && isValidUrl(addLink)) {
       const cleanedUrl = addLink.replace(/^(https?:\/\/)?(www\.)?/i, '');
-      const newListItem = document.createElement("li");
+      const newListItem = document.createElement("div");
       const newLink = document.createElement("a");
       const removeLinkBtn = document.createElement("button");
+
+      newListItem.classList.add("link-item");
 
       newLink.href = addLink;
       newLink.textContent = cleanedUrl;
@@ -90,8 +86,6 @@ function saveLinks() {
   localStorage.setItem("linkListContent", linkContent);
 }
 
-
-//Weather
 const apiKeyWeather = "2a95bae798cb75042546bc09335b74b6";
 const city = "Stockholm";
 
@@ -103,7 +97,6 @@ fetchWeatherForecast(city, apiKeyWeather)
   .catch(error => {
     console.error("Error fetching weather data:", error);
   });
-
 
   function updateWeatherHTML(weatherData) {
     const weatherContainer = document.querySelector("#weatherContainer");
@@ -128,19 +121,24 @@ fetchWeatherForecast(city, apiKeyWeather)
       weatherContainer.appendChild(dayElement);
     });
   
+  }
     const drinkContainer = document.querySelector(".drink-display");
-    const fetchCocktailBtn = document.querySelector(".drink-btn")
-    fetchCocktailBtn.addEventListener("click", async () => {
-      try {
-        const cocktailData = await fetchRandomCocktail();
-        displayCocktail(cocktailData);
-      } catch (error) {
-        console.error("Error fetching and displaying cocktail:", error);
-      }
-    });
+    const fetchCocktailBtn = document.querySelector(".drink-btn");
   
     drinkContainer.innerHTML = ""; // Clear previous content
     drinkContainer.appendChild(fetchCocktailBtn);
+  
+    fetchCocktailBtn.addEventListener("click", () => handleFetchCocktail());
+  
+  function handleFetchCocktail() {
+    fetchRandomCocktail()
+      .then(cocktailData => {
+        const drinkContainer = document.querySelector(".drink-display");
+        drinkContainer.innerHTML = "";
+        displayCocktail(cocktailData);
+      })
+      .catch(error => {
+        console.error("Error fetching and displaying new cocktail:", error);
+      });
   }
-
-
+  
